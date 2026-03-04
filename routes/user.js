@@ -15,7 +15,7 @@ router.post("/signup", wrapAsync(async (req,res)=>{
     const newUser = new User({email,username});
     const registeredUser = await User.register(newUser,password);
     console.log(registeredUser);
-    req.flash("success','Welcome to Wanderlust");
+    req.flash("success','Welcome to  Intellijorney");
     res.redirect("/listings");
 
     } catch(e){
@@ -39,7 +39,7 @@ router.post(
     failureFlash:true,
 }),
 async(req,res) => {
-    res.send("Welcome to Wanderlust! YOu are logged in!");
+    res.send("Welcome to  Intellijorney! YOu are logged in!");
 }
 );
 

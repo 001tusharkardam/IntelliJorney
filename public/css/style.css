@@ -5,7 +5,9 @@ body {
     min-height: 100vh;
 
 }
-
+a{
+    text-decoration: none !important;
+}
 .container {
     flex: 1;
 
@@ -15,7 +17,9 @@ body {
 .navbar {
     min-height: 5rem;
     background-color: white;
+  
 }
+
 
 .fa-compass {
     color: #fe424d;
@@ -33,7 +37,7 @@ body {
 }
 
 .f-info-links a:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .f-info-links,
@@ -44,6 +48,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    
 }
 
 .f-info-socials i {
@@ -140,3 +145,4 @@ body {
     height: 400px;
     width: 100%;
 }
+

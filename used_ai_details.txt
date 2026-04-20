@@ -1,0 +1,41 @@
+# AI ry
+- **Provider:** Google DeepMind (Google Generative AI)
+- **Library/Package:** `@google/geImplementation Details (AI Jo Project Mein Use Hua Hai)
+
+Is project mein humne **Google Gemini AI** ka use kiya hai travel itineraries generate karne ke liye. Niche di gayi details hain jo aap apni file mein likh sakte hain:
+
+## 1. AI Provider & Libranerative-ai` (Node.js SDK)
+- **API Endpoint:** `generativelanguage.googleapis.com`
+
+## 2. AI Models Used
+Code mein alag-alag jagah par ye models configure ya test kiye gaye hain:
+- **Primary Model (Controller mein):** `gemini-2.5-flash` (Latest configured model specific to travel planning)
+- **Backup/Tested Models (fix_ai.js mein check kiye gaye):** 
+  - `gemini-2.5-flash`
+  - `gemini-1.5-pro`
+  - `gemini-1.0-pro`
+  - `gemini-pro`
+
+## 3. Purpose (Kyun Use Kiya?)
+Humne AI ka use "Expert Travel Agent" ki tarah kiya hai taki users ke liye custom trip plan ban sake.
+- **Input:** User se Destination, Source City, Budget, Days, Interests, aur Transport Mode liya jata hai.
+- **Output:** AI ek detailed Markdown format mein travel plan banata hai jisme shamil hain:
+  - Estimated Travel Cost & Time
+  - Daily Itinerary (Morning, Afternoon, Evening)
+  - Must-visit Places
+  - Food Recommendations
+  - Packing List & Safety Tips
+  - Total Budget Calculation
+
+## 4. Code Snippet (Example)
+`controllers/ai.js` mein humne `generateContent` method ka use kiya hai prompt bhej kar response lene ke liye.
+
+```javascript
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+const result = await model.generateContent(prompt);
+const response = await result.response;
+const text = response.text();
+```

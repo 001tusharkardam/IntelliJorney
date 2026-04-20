@@ -16,24 +16,41 @@ module.exports.generatePlan = async (req, res) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
-
+        
         const prompt = `Act as an expert travel agent. 
-        Create a detailed ${days}-day trip itinerary from ${source} to ${destination} via ${transport} with a budget of ${budget} per person.
-        The traveler is interested in: ${interests}.
+        Create a ${days}-day trip itinerary from ${source} to ${destination} via ${transport} with a budget of ${budget}/person. Interests: ${interests}.
         
-        Make the response structured and inspiring. Include:
-        - **Travel Plan**: Best route from ${source} to ${destination} by ${transport}. Estimated travel time and cost.
-        - **Daily Itinerary**: Morning, Afternoon, Evening activities.
-        - **Estimated Costs**: Detailed breakdown (Travel tickets, Food, Stay, Activities).
-        - **Must-Visit Places**: Key attractions with brief descriptions.
-        - **Food Recommendations**: Local dishes to try.
-        - **Travel Tips**: Best time to visit, packing list, safety tips.
-        - **Total Estimated Budget**: Provide a final calculated total cost range for the entire trip (including travel, stay, food, and activities) at the very end.
+        CRITICAL INSTRUCTION: Be extremely concise and fast. Use short bullet points. Do not write long paragraphs. 
         
-        Format the output in clean Markdown with bold headings and bullet points.`;
+        Include:
+        - Route & Travel time
+        - Short Daily Itinerary (Morning, Afternoon, Evening)
+        - Cost Breakdown & Total Budget
+        - 2-3 Must-Visit Places & Local Food
+        
+        Format in clean Markdown.`;
 
-        const result = await model.generateContent(prompt);
+        const modelsToTry = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-flash-latest"];
+        let result;
+        let lastError;
+
+        for (const modelName of modelsToTry) {
+            try {
+                console.log(`Attempting to generate itinerary using ${modelName}...`);
+                const model = genAI.getGenerativeModel({ model: modelName });
+                result = await model.generateContent(prompt);
+                console.log(`Success! ${modelName} generated the plan.`);
+                break; // Exit loop on success
+            } catch (err) {
+                console.error(`WARNING: ${modelName} failed with error -`, err.message);
+                lastError = err;
+            }
+        }
+
+        if (!result) {
+            throw lastError || new Error("All backup AI models failed to generate content.");
+        }
+
         const response = await result.response;
         const text = response.text();
         const htmlContent = md.render(text);

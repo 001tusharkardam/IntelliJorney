@@ -6,40 +6,49 @@
       flex-wrap: nowrap;
       align-items: center;
       overflow-x: auto;
-      width: 100%;
-      padding: 1rem 0;
+      padding: 0.5rem 0; /* less padding */
       -webkit-overflow-scrolling: touch;
-      /* smooth scrolling on iOS */
       scrollbar-width: none;
-      /* Firefox */
     }
 
     #filters::-webkit-scrollbar {
       display: none;
-      /* Chrome, Safari, Opera */
     }
 
     .filter {
       text-align: center;
-      margin-right: 2rem;
-      opacity: 0.7;
+      margin-right: 1.5rem; /* smaller gap */
+      opacity: 0.6;
       color: black;
       flex-shrink: 0;
-      /* Prevent shrinking */
-      min-width: 60px;
-      /* Ensure clickable area */
+      min-width: 50px;
     }
 
     .filter:hover {
       opacity: 1;
       cursor: pointer;
     }
+    
+    .filter i {
+      font-size: 1.25rem; /* slightly larger icon */
+      margin-bottom: 0.2rem;
+    }
 
     .filter p {
-      font-size: 0.8rem;
-      margin-top: 0.5rem;
-      /* Add some spacing between icon and text */
-      margin-bottom: 0;
+      font-size: 0.75rem; /* thinner text */
+      margin-top: 0.2rem;
+      font-weight: 500;
+      color: inherit;
+    }
+
+    .filter.active {
+      opacity: 1;
+      border-bottom: 2px solid #222;
+    }
+    .filter.active p {
+      color: #222;
+      font-weight: 600;
+      margin-bottom: -2px; /* compensate for border */
     }
 
     .tax-info {
@@ -48,60 +57,67 @@
 
     .tag-toggle {
       border: 1px solid #ddd;
-      border-radius: 1rem;
-      height: 3.25rem;
+      border-radius: 12px;
+      height: 3rem;
       padding: 0 1rem;
       display: flex;
       align-items: center;
-      margin-left: auto;
-      /* Push to right on desktop */
-      flex-shrink: 0;
-      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+      background: white;
+    }
+    
+    .form-switch .form-check-input {
+      cursor: pointer;
+      width: 2.5em; /* standard switch size */
+      background-color: #b0b0b0;
+      border: none;
+    }
+    .form-switch .form-check-input:checked {
+      background-color: #222; /* Black active switch like Airbnb */
     }
 
     /* Mobile adjustments */
     @media (max-width: 768px) {
+      .filters-container {
+        flex-direction: column;
+        align-items: stretch !important;
+        margin-top: 0 !important;
+      }
       #filters {
         padding-bottom: 0.5rem;
+        margin-bottom: 0.5rem;
+        border-bottom: 1px solid #ebebeb;
       }
-
       .tag-toggle {
-        display: none;
-        /* Optionally hide or move on very small screens if it takes too much space, or we can create a separate row */
+        margin: 0.5rem 1rem;
+        width: auto; /* Allow auto width on mobile instead of full stretch */
+        border: none; /* Make it look like plain text with toggle on mobile */
+        justify-content: space-between;
+        padding: 0;
+        height: auto;
       }
-
-      /* If we want to keep the toggle on mobile, we might place it above or below filters, but standard Airbnb hides filters or puts them in a modal on mobile mostly, but scrolling is fine. 
-       Let's keep the toggle but maybe make it smaller or separate row if requested. For now, hiding on very small screens or moving it is safer to prevent overlap. 
-       Actually, let's keep it visible but maybe outside the scroll container?
-       The current structure has it IN the #filters container. If #filters is scrolling, the toggle will scroll away. 
-       Let's move the toggle OUT of #filters for better layout control.
-    */
     }
   </style>
 
-  <div class="filters-container d-flex align-items-center mb-3">
-    <div id="filters">
-      <a href="/listings"
-        class="filter <%= selectedCategory === undefined || selectedCategory === '' ? 'active' : '' %>">
+  <div class="filters-container d-flex flex-nowrap align-items-center justify-content-between mb-3 mt-3">
+    <div id="filters" class="flex-grow-1">
+      <a href="/listings" class="filter <%= selectedCategory === undefined || selectedCategory === '' ? 'active' : '' %>">
         <div><i class="fa-solid fa-fire"></i></div>
         <p>Trending</p>
       </a>
-      <a href="/listings?category=Iconic Cities"
-        class="filter <%= selectedCategory === 'Iconic Cities' ? 'active' : '' %>">
+      <a href="/listings?category=Iconic Cities" class="filter <%= selectedCategory === 'Iconic Cities' ? 'active' : '' %>">
         <div><i class="fa-solid fa-mountain-city"></i></div>
-        <p>Iconic Cities </p>
+        <p>Iconic Cities</p>
       </a>
       <a href="/listings?category=Mountains" class="filter <%= selectedCategory === 'Mountains' ? 'active' : '' %>">
         <div><i class="fa-solid fa-mountain"></i></div>
         <p>Mountains</p>
       </a>
-      <a href="/listings?category=Amazing pools"
-        class="filter <%= selectedCategory === 'Amazing pools' ? 'active' : '' %>">
+      <a href="/listings?category=Amazing pools" class="filter <%= selectedCategory === 'Amazing pools' ? 'active' : '' %>">
         <div><i class="fa-solid fa-person-swimming"></i></div>
         <p>Amazing pools</p>
       </a>
       <a href="/listings?category=Castles" class="filter <%= selectedCategory === 'Castles' ? 'active' : '' %>">
-        <div><i class="fa-solid fa-bed"></i></div>
+        <div><i class="fa-brands fa-fort-awesome"></i></div>
         <p>Castles</p>
       </a>
       <a href="/listings?category=Camping" class="filter <%= selectedCategory === 'Camping' ? 'active' : '' %>">
@@ -109,55 +125,98 @@
         <p>Camping</p>
       </a>
       <a href="/listings?category=Farms" class="filter <%= selectedCategory === 'Farms' ? 'active' : '' %>">
-        <div><i class="fa-solid fa-cow"></i></div>
+        <div><i class="fa-solid fa-tractor"></i></div>
         <p>Farms</p>
       </a>
       <a href="/listings?category=Arctic" class="filter <%= selectedCategory === 'Arctic' ? 'active' : '' %>">
-        <div><i class="fa-solid fa-person-swimming"></i></div>
-        <p>Arctic </p>
+        <div><i class="fa-regular fa-snowflake"></i></div>
+        <p>Arctic</p>
       </a>
       <a href="/listings?category=Domes" class="filter <%= selectedCategory === 'Domes' ? 'active' : '' %>">
         <div><i class="fa-solid fa-igloo"></i></div>
-        <p>Domes </p>
+        <p>Domes</p>
       </a>
       <a href="/listings?category=Boats" class="filter <%= selectedCategory === 'Boats' ? 'active' : '' %>">
-        <div><i class="fa-regular fa-snowflake"></i></div>
-        <p>Boats </p>
+        <div><i class="fa-solid fa-ship"></i></div>
+        <p>Boats</p>
       </a>
     </div>
 
     <!-- Toggle outside the scrollable area -->
-    <div class="tag-toggle ms-auto d-none d-md-flex">
-      <div class="form-check-reverse form-switch">
-        <input type="checkbox" class="form-check-input" role="switch" id="flexSwitchCheckDefault">
-        <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
+    <div class="tag-toggle">
+      <div class="form-check-reverse form-switch w-100 d-flex justify-content-between align-items-center m-0">
+        <input type="checkbox" class="form-check-input ms-3 m-0" role="switch" id="flexSwitchCheckDefault">
+        <label class="form-check-label ms-2 m-0" for="flexSwitchCheckDefault" style="font-size: 0.95rem; font-weight: 500; color: var(--bs-body-color);">Display total before taxes</label>
       </div>
     </div>
   </div>
 
-  <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
+  <div class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 mt-3">
     <% if(allListings.length===0) { %>
-      <div class="col-12">
-        <p style="text-align: center; padding: 2rem; font-size: 1.1rem; color: #666;">
-          No listings found for <strong>
-            <%= selectedCategory || 'this category' %>
-          </strong>. Try selecting a different filter!
-        </p>
+      <div class="col-12 text-center">
+        <div style="padding: 3rem 1rem;">
+          <i class="fa-solid fa-cloud-moon" style="font-size: 3rem; color: #ddd; margin-bottom: 1rem;"></i>
+          <p style="font-size: 1.25rem; color: #555; font-weight: 500;">
+            <% if(search) { %>
+              No results found for "<%= search %>"
+                <% } else if(selectedCategory) { %>
+                  No listings found in "<%= selectedCategory %>"
+                    <% } else { %>
+                      No listings available at the moment.
+                      <% } %>
+          </p>
+          <p style="color: #888;">Try adjusting your search or filters to find what you're looking for.</p>
+          <a href="/listings" class="btn btn-outline-dark mt-2">Clear all filters</a>
+        </div>
       </div>
       <% } %>
         <% for(let listing of allListings) { %>
           <a href="/listings/<%= listing._id %>" class="listing-links">
             <div class="card col listing-card">
-              <img src="<%= typeof listing.image === 'object' ? listing.image.url : listing.image %>"
-                class="card-img-top" alt="listing_image" style="height: 20rem" />
+             <% if(listing.images && listing.images.length > 0) { %>
+                <div id="carousel-<%= listing._id %>" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
+                  <div class="carousel-indicators">
+                    <% listing.images.forEach((img, i) => { %>
+                      <button type="button" data-bs-target="#carousel-<%= listing._id %>" data-bs-slide-to="<%= i %>" class="<%= i === 0 ? 'active' : '' %>" aria-current="true" aria-label="Slide <%= i+1 %>" onclick="event.preventDefault(); event.stopPropagation();"></button>
+                    <% }) %>
+                  </div>
+                  <div class="carousel-inner" style="border-radius: 1rem; background: #fff;">
+                    <% listing.images.forEach((img, i) => { %>
+                      <div class="carousel-item <%= i === 0 ? 'active' : '' %>" style="background: #fff; text-align: center;">
+                        <img src="<%= img.url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="d-block w-100 card-img-top" alt="listing image" style="object-fit:cover;">
+                      </div>
+                    <% }) %>
+                  </div>
+                  <% if(listing.images.length > 1) { %>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-<%= listing._id %>" data-bs-slide="prev" onclick="event.preventDefault(); event.stopPropagation();">
+                      <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: drop-shadow(0px 0px 4px rgba(0,0,0,0.5));"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-<%= listing._id %>" data-bs-slide="next" onclick="event.preventDefault(); event.stopPropagation();">
+                      <span class="carousel-control-next-icon" aria-hidden="true" style="filter: drop-shadow(0px 0px 4px rgba(0,0,0,0.5));"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  <% } %>
+                </div>
+             <% } else { %>
+                <img 
+                  src="<%= (typeof listing.image === 'object' ? listing.image.url : listing.image).replace('/upload', '/upload/w_400,q_auto,f_auto') %>" 
+                  loading="lazy"
+                  class="card-img-top"
+                  alt="listing image"
+                  style="object-fit:cover;"
+                />
+             <% } %>
               <div class="card-img-overlay"></div>
-              <div class="card-body">
-                <p class="card-text">
-                  <b>
-                    <%= listing.title %><br>
-                  </b>
-                  &#8377; <%= listing.price.toLocaleString("en-IN") %> /night
-                    <i class="tax-info">&nbsp; &nbsp; +18% GST</i>
+              <div class="card-body" style="padding: 0.5rem 0.25rem;">
+                <p class="card-text mb-0">
+                  <span style="font-weight: 600; font-size: 1rem; color: var(--bs-body-color);"><%= listing.title %></span><br>
+                  <span style="font-size: 0.95rem; color: var(--bs-secondary-color);" class="text-body-secondary">Added recently</span><br>
+                  <span style="font-weight: 600; margin-top: 0.25rem; display: inline-block; color: var(--bs-body-color);">
+                    &#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : "0" %>
+                  </span> 
+                  <span style="color: var(--bs-body-color);">night</span>
+                  <i class="tax-info" style="font-weight:400; font-size:0.9rem; color: var(--bs-secondary-color);">&nbsp; &nbsp; +18% GST</i>
                 </p>
               </div>
             </div>

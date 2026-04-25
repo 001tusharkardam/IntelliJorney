@@ -6,21 +6,29 @@ const geocodingClient = mbxGeocoding({ accessToken: mapToken });
 const mongoose = require("mongoose");
 const ExpressError = require("../utils/ExpressError.js");
 
-module.exports.index = async(req, res) => {
-    const { category } = req.query;
-    let filter = {};
-    
-    if(category && category !== "all") {
-      filter = { category: category };
-    }
-    
-    const allListings = await Listing.find(filter);
-    res.render("listings/index.ejs", {allListings, selectedCategory: category});
+module.exports.index = async (req, res) => {
+  const { category, search } = req.query;
+  let filter = {};
+
+  if (category && category !== "all") {
+    filter.category = category;
+  }
+
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { location: { $regex: search, $options: "i" } },
+      { country: { $regex: search, $options: "i" } }
+    ];
+  }
+
+  const allListings = await Listing.find(filter);
+  res.render("listings/index.ejs", { allListings, selectedCategory: category });
 };
 
 
-module.exports.renderNewForm = (req, res) =>{
-    res.render("listings/new.ejs");
+module.exports.renderNewForm = (req, res) => {
+  res.render("listings/new.ejs");
 };
 
 module.exports.showListing = async (req, res) => {
@@ -29,16 +37,16 @@ module.exports.showListing = async (req, res) => {
     throw new ExpressError(400, "Invalid ID");
   }
   const listing = await Listing.findById(id)
-  .populate({
-    path: "reviews",
-    populate: {
-      path: "author"
-    }
-  })
-  .populate("owner");
+    .populate({
+      path: "reviews",
+      populate: {
+        path: "author"
+      }
+    })
+    .populate("owner");
   if (!listing) {
-   req.flash("error", "Listing you requested does not exist!");
-   throw new ExpressError(404, "Listing not found");
+    req.flash("error", "Listing you requested does not exist!");
+    throw new ExpressError(404, "Listing not found");
   }
 
   // If geometry is missing or coordinates are missing, geocode the location and update the listing
@@ -48,7 +56,7 @@ module.exports.showListing = async (req, res) => {
         query: listing.location || "Jaipur, India",
         limit: 1,
       }).send();
-      
+
       if (response.body.features.length > 0) {
         listing.geometry = response.body.features[0].geometry;
         await listing.save();
@@ -68,30 +76,31 @@ module.exports.showListing = async (req, res) => {
 
 module.exports.createListing = async (req, res, next) => {
   let response = await geocodingClient.forwardGeocode({
-      query: req.body.listing.location,
-      limit: 1,
+    query: req.body.listing.location,
+    limit: 1,
   })
-  .send();
+    .send();
 
   const DEFAULT_IMG = "https://images.unsplash.com/photo-1625505826533-5c80aca7d157?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdvYXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=800&q=60";
 
   const newListing = new Listing(req.body.listing);
   newListing.owner = req.user._id;
 
-  if (req.file && req.file.path) {
-    newListing.image = { url: req.file.path, filename: req.file.filename };
+  if (req.files && req.files.length > 0) {
+    newListing.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
+    newListing.image = newListing.images[0]; // backward compatibility
   } else {
     newListing.image = { url: DEFAULT_IMG, filename: "listingimage" };
   }
-  
+
   if (response.body.features.length > 0) {
     newListing.geometry = response.body.features[0].geometry;
   } else {
     newListing.geometry = { type: "Point", coordinates: [75.7873, 26.9124] }; // Fallback to Jaipur
   }
-  
-  let savedListing =  await newListing.save();
-   console.log(savedListing);
+
+  let savedListing = await newListing.save();
+  console.log(savedListing);
   req.flash("success", "Successfully added a new listing!");
   res.redirect("/listings");
 };
@@ -103,8 +112,8 @@ module.exports.renderEditForm = async (req, res) => {
   // }
   const listing = await Listing.findById(id);
   if (!listing) {
-   req.flash("error", "Listing you requested does not exist!");
-   throw new ExpressError(404, "Listing not found");
+    req.flash("error", "Listing you requested does not exist!");
+    throw new ExpressError(404, "Listing not found");
   }
   res.render("listings/edit.ejs", { listing });
 };
@@ -116,8 +125,9 @@ module.exports.updateListing = async (req, res) => {
   }
 
   const update = { ...req.body.listing };
-  if (req.file && req.file.path) {
-    update.image = { url: req.file.path, filename: req.file.filename };
+  if (req.files && req.files.length > 0) {
+    update.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
+    update.image = update.images[0]; // backward compatibility
   }
 
   // Geocode the location if provided

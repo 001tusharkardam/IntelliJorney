@@ -28,7 +28,7 @@ const reviewsRouter = require("./classroom/routes/review.js");
 const userRouter = require("./classroom/routes/user.js");
 const aiRouter = require("./classroom/routes/ai.js");
 
-// const dbUrl = "mongodb://127.0.0.1:27017/wanderlust";
+//const dbUrl = "mongodb://127.0.0.1:27017/wanderlust";
 const dbUrl = process.env.ATLASDB_URL;
 
 main()
@@ -95,6 +95,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash("success");
   res.locals.error = req.flash("error");
   res.locals.currUser = req.user;
+  res.locals.search = req.query.search || "";
   next();
 });
 

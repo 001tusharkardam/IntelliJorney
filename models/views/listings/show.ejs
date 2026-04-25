@@ -6,23 +6,109 @@
 </script>
 <div class="row mt-3">
   <div class="col-8 offset-2">
-    <h3><%= listing.title %></h3>
-  </div>
-    <div class="cards col-6 offset-2 show-card listing-card">
-       <img src="<%= typeof listing.image === 'object' ? listing.image.url : listing.image %>"
-        class="card-img-top show-img"
-         alt="listing_image"
-         />
-  <div class="card-body">
-    <p class="card-text"><i> <%= listing.owner ? `owned by ${listing.owner.username}` : 'owned by developer' %></i></p>
+    <style>
+      .photo-grid-img {
+        transition: filter 0.2s ease;
+        cursor: pointer;
+      }
+      .photo-grid-container:hover .photo-grid-img:not(:hover) {
+        filter: brightness(0.85);
+      }
+      .btn-show-all:hover {
+        background-color: #f8f9fa !important;
+        transform: scale(1.02);
+      }
+      [data-bs-theme='dark'] .top-bar-btn { color: #f8f9fa !important; }
+      [data-bs-theme='dark'] .btn-show-all { background-color: #212529 !important; color: #f8f9fa !important; border-color: #f8f9fa !important; }
+    </style>
 
-     <p class="card-text"> <%= listing.description %> </p>
-       <p class="card-text"> &#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : 'N/A' %> /night </p>
-
-       <p class="card-text"> <%= listing.location %> </p>
-       <p class="card-text"> <%= listing.country %> </p>
-  </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="m-0" style="font-weight: 600; font-size: 1.7rem;"><%= listing.title %></h3>
+      <div class="d-flex gap-3">
+        <button id="share-listing-btn" class="top-bar-btn btn btn-sm text-dark fw-semibold border-0 bg-transparent text-decoration-underline d-flex align-items-center" style="font-size: 0.95rem;">
+          <i class="fa-solid fa-arrow-up-from-bracket me-2 pt-1"></i>Share
+        </button>
+        <button id="save-listing-btn" class="top-bar-btn btn btn-sm text-dark fw-semibold border-0 bg-transparent text-decoration-underline d-flex align-items-center" style="font-size: 0.95rem;">
+          <i id="save-heart-icon" class="fa-regular fa-heart me-2 pt-1"></i><span id="save-text">Save</span>
+        </button>
+      </div>
     </div>
+
+    <% if(listing.images && listing.images.length >= 5) { %>
+      <div class="photo-grid-container position-relative mb-4" style="border-radius: 12px; overflow: hidden; height: 60vh;">
+        <div class="row g-2 h-100 w-100 m-0">
+          <div class="col-md-6 h-100 p-0 pe-1">
+            <img src="<%= listing.images[0].url.replace('/upload', '/upload/w_1000,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Main Image">
+          </div>
+          <div class="col-md-6 h-100 p-0 ps-1 d-flex flex-column gap-2">
+            <div class="row g-2 h-50 m-0">
+              <div class="col-6 h-100 p-0 pe-1 pb-1">
+                <img src="<%= listing.images[1].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 2">
+              </div>
+              <div class="col-6 h-100 p-0 ps-1 pb-1">
+                <img src="<%= listing.images[2].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 3">
+              </div>
+            </div>
+            <div class="row g-2 h-50 m-0">
+              <div class="col-6 h-100 p-0 pe-1 pt-1">
+                <img src="<%= listing.images[3].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 4">
+              </div>
+              <div class="col-6 h-100 p-0 ps-1 pt-1 position-relative">
+                <img src="<%= listing.images[4].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 5">
+                <button class="btn btn-light position-absolute border border-dark rounded-3 px-3 py-1 bg-white text-black btn-show-all shadow-sm" data-bs-toggle="modal" data-bs-target="#allPhotosModal" style="bottom: 16px; right: 16px; font-weight: 600; font-family: 'plus-jakarta-sans', sans-serif;">
+                  <i class="fa-solid fa-braille me-2"></i>Show all photos
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } else if(listing.images && listing.images.length > 0) { %>
+      <div id="listingCarousel" class="carousel slide mb-4" data-bs-ride="false" data-bs-interval="false" style="border-radius: 12px; overflow: hidden;">
+        <div class="carousel-indicators">
+          <% listing.images.forEach((img, i) => { %>
+            <button type="button" data-bs-target="#listingCarousel" data-bs-slide-to="<%= i %>" class="<%= i === 0 ? 'active' : '' %>" aria-current="true" aria-label="Slide <%= i+1 %>"></button>
+          <% }) %>
+        </div>
+        <div class="carousel-inner" style="background: #fff; height: 60vh;">
+          <% listing.images.forEach((img, i) => { %>
+            <div class="carousel-item <%= i === 0 ? 'active' : '' %> h-100" style="background: #fff; text-align: center;">
+              <img src="<%= img.url.replace('/upload', '/upload/w_1000,q_auto,f_auto') %>" class="d-block w-100 h-100" alt="listing image" style="object-fit:cover;">
+            </div>
+          <% }) %>
+        </div>
+        <% if(listing.images.length > 1) { %>
+          <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true" style="filter: drop-shadow(0px 0px 4px rgba(0,0,0,0.5));"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true" style="filter: drop-shadow(0px 0px 4px rgba(0,0,0,0.5));"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="mb-4" style="border-radius: 12px; overflow: hidden; height: 60vh;">
+        <img src="<%= typeof listing.image === 'object' ? listing.image.url : listing.image %>" class="w-100 h-100" style="object-fit:cover;" alt="listing_image" />
+      </div>
+    <% } %>
+
+    <div class="card-body p-0 mt-3 listing-card border-0" style="background: transparent;">
+      <p class="card-text mb-4" style="font-size: 1.1rem;">Hosted by <%= listing.owner ? listing.owner.username : 'IntelliJourney Developer' %></p>
+      <hr>
+      <p class="card-text my-4" style="font-size: 1rem; line-height: 1.6;"> <%= listing.description %> </p>
+      <hr>
+      <p class="card-text my-4" style="font-size: 1.1rem;"> 
+         <span style="font-weight: 600; font-size: 1.3rem;">&#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : 'N/A' %></span> / night 
+      </p>
+      <hr>
+      <div class="my-4">
+         <p class="card-text mb-1" style="font-weight: 500;"><i class="fa-solid fa-location-dot me-2"></i> <%= listing.location %></p>
+         <p class="card-text" style="color: #717171;"><i class="fa-solid fa-globe me-2"></i> <%= listing.country %></p>
+      </div>
+    </div>
+  </div>
     <br>
     <% if( currUser && listing.owner && currUser._id.equals(listing.owner._id)) { %>
     <div class="btns">
@@ -126,9 +212,97 @@ href="/listings/<%= listing._id %>/edit"
      
 
    
-     
-     
 
 
+<!-- All Photos Modal -->
+<div class="modal fade" id="allPhotosModal" tabindex="-1" aria-labelledby="allPhotosModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content text-bg-dark">
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body d-flex justify-content-center align-items-center">
+        <% if(listing.images && listing.images.length > 0) { %>
+          <div id="modalCarousel" class="carousel slide" data-bs-ride="false" style="max-width: 900px; width: 100%;">
+            <div class="carousel-inner text-center">
+              <% listing.images.forEach((img, i) => { %>
+                <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                  <img src="<%= img.url.replace('/upload', '/upload/w_1200,q_auto,f_auto') %>" class="img-fluid" style="max-height: 85vh; object-fit: contain;" alt="Listing image <%= i+1 %>">
+                </div>
+              <% }) %>
+            </div>
+            <% if(listing.images.length > 1) { %>
+              <button class="carousel-control-prev" type="button" data-bs-target="#modalCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#modalCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</div>
 
+<script>
+  // Share Button functionality
+  document.getElementById('share-listing-btn')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: '<%= listing.title %>',
+          url: window.location.href
+        });
+      } catch (err) {
+        console.error('Error sharing:', err);
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      const originalText = e.currentTarget.innerHTML;
+      e.currentTarget.innerHTML = '<i class="fa-solid fa-check me-2 pt-1"></i>Copied';
+      setTimeout(() => e.currentTarget.innerHTML = originalText, 2000);
+    }
+  });
 
+  // Save Button Functionality
+  const saveBtn = document.getElementById('save-listing-btn');
+  const saveIcon = document.getElementById('save-heart-icon');
+  const saveText = document.getElementById('save-text');
+  
+  if (saveBtn) {
+    const listingId = '<%= listing._id %>';
+    const savedListings = JSON.parse(localStorage.getItem('savedListings') || '[]');
+    
+    // Check initial state
+    if (savedListings.includes(listingId)) {
+      saveIcon.classList.remove('fa-regular');
+      saveIcon.classList.add('fa-solid', 'text-danger');
+      saveText.innerText = 'Saved';
+    }
+
+    saveBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      let currentSaved = JSON.parse(localStorage.getItem('savedListings') || '[]');
+      
+      if (currentSaved.includes(listingId)) {
+        // Unsave
+        currentSaved = currentSaved.filter(id => id !== listingId);
+        saveIcon.classList.add('fa-regular');
+        saveIcon.classList.remove('fa-solid', 'text-danger');
+        saveText.innerText = 'Save';
+      } else {
+        // Save
+        currentSaved.push(listingId);
+        saveIcon.classList.remove('fa-regular');
+        saveIcon.classList.add('fa-solid', 'text-danger');
+        saveText.innerText = 'Saved';
+      }
+      localStorage.setItem('savedListings', JSON.stringify(currentSaved));
+    });
+  }
+</script>

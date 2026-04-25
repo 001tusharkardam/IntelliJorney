@@ -64,7 +64,7 @@
                         <h4 class="m-0"><i class="fa-solid fa-plane-departure"></i> Your Trip to <%= destination %>
                         </h4>
                     </div>
-                    <div class="card-body bg-light">
+                    <div class="card-body">
                         <div class="card-text ai-response">
                             <%- plan %>
                         </div>
@@ -92,7 +92,8 @@
             margin-bottom: 5px;
         }
 
+        /* Removed hardcoded #333 color from strong so it adapts to dark/light mode */
         .ai-response strong {
-            color: #333;
+            font-weight: bold;
         }
     </style>

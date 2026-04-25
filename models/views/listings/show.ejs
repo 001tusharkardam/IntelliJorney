@@ -5,7 +5,7 @@
   const listingData = <%- JSON.stringify(listing) %>;
 </script>
 <div class="row mt-3">
-  <div class="col-8 offset-2">
+  <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 px-4 px-md-3">
     <style>
       .photo-grid-img {
         transition: filter 0.2s ease;
@@ -22,9 +22,9 @@
       [data-bs-theme='dark'] .btn-show-all { background-color: #212529 !important; color: #f8f9fa !important; border-color: #f8f9fa !important; }
     </style>
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h3 class="m-0" style="font-weight: 600; font-size: 1.7rem;"><%= listing.title %></h3>
-      <div class="d-flex gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
+      <h3 class="m-0" style="font-weight: 600; font-size: 1.7rem; word-break: break-word;"><%= listing.title %></h3>
+      <div class="d-flex gap-3 flex-shrink-0">
         <button id="share-listing-btn" class="top-bar-btn btn btn-sm text-dark fw-semibold border-0 bg-transparent text-decoration-underline d-flex align-items-center" style="font-size: 0.95rem;">
           <i class="fa-solid fa-arrow-up-from-bracket me-2 pt-1"></i>Share
         </button>
@@ -124,10 +124,10 @@ href="/listings/<%= listing._id %>/edit"
      <% } %>
 
 
-     <div class="col-8 offset-2 mb-3">
+     <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 px-4 px-md-3 mb-3 mt-4">
         <% if(currUser) { %>
   <hr>
-      <h4>Leave a Review</h4>
+      <h4 class="fw-semibold">Leave a Review</h4>
       <form action="/listings/<%= listing._id %>/reviews" method="post" novalidate class="needs-validation">
 <div class="mb-3 mt-3">
       <label for="rating" class="form-label">Rating</label>
@@ -166,10 +166,11 @@ href="/listings/<%= listing._id %>/edit"
 
          
 <% if (listing.reviews.length > 0) { %>
-     <div class="row">
-        <p><b>All Review</b></p>
+     <div class="row g-3">
+        <p class="mb-2"><b>All Reviews</b></p>
        <% for(review of listing.reviews){ %>
-        <div class="card col-5 ms-3 mb-3">
+        <div class="col-12 col-md-6 col-lg-5 mb-3">
+          <div class="card h-100">
           <div class="card-body">
             <h5 class="card-title">@<%= review.author ? review.author.username : 'Anonymous' %></h5>
               <p class="starability-result card-text" 
@@ -184,14 +185,15 @@ href="/listings/<%= listing._id %>/edit"
             <button  class=" btn btn-sm btn-dark">Delete</button>
           </form>
           </div>
+          </div>
         </div>
         <% } %>
       </div>
        <% } %>
      </div>
-      <div class="col-8 offset-3 mb-3">
-        <h3>where you'll be</h3>
-        <div id="map"></div>
+      <div class="col-12 col-md-10 offset-md-1 col-lg-8 offset-lg-2 px-4 px-md-3 mb-4 mt-2">
+        <h4 class="fw-semibold mb-3">Where you'll be</h4>
+        <div id="map" class="rounded-4 w-100"></div>
       </div>
      </div>
      <script>

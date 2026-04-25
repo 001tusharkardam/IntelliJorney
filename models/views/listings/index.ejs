@@ -151,7 +151,7 @@
     </div>
   </div>
 
-  <div class="row row-cols-xl-4 row-cols-lg-3 row-cols-md-2 row-cols-sm-2 row-cols-1 mt-3">
+  <div class="row row-cols-xl-4 row-cols-lg-4 row-cols-md-3 row-cols-sm-2 row-cols-2 mt-3 g-2 g-md-3">
     <% if(allListings.length===0) { %>
       <div class="col-12 text-center">
         <div style="padding: 3rem 1rem;">
@@ -209,14 +209,14 @@
              <% } %>
               <div class="card-img-overlay"></div>
               <div class="card-body" style="padding: 0.5rem 0.25rem;">
-                <p class="card-text mb-0">
-                  <span style="font-weight: 600; font-size: 1rem; color: var(--bs-body-color);"><%= listing.title %></span><br>
-                  <span style="font-size: 0.95rem; color: var(--bs-secondary-color);" class="text-body-secondary">Added recently</span><br>
-                  <span style="font-weight: 600; margin-top: 0.25rem; display: inline-block; color: var(--bs-body-color);">
+                <p class="card-text mb-0" style="line-height: 1.3;">
+                  <span class="text-truncate d-inline-block w-100" style="font-weight: 600; font-size: 0.95rem; color: var(--bs-body-color);"><%= listing.title %></span><br>
+                  <span style="font-size: 0.85rem; color: var(--bs-secondary-color);" class="text-body-secondary">Added recently</span><br>
+                  <span style="font-weight: 600; margin-top: 0.15rem; display: inline-block; font-size: 0.95rem; color: var(--bs-body-color);">
                     &#8377; <%= listing.price ? listing.price.toLocaleString("en-IN") : "0" %>
                   </span> 
-                  <span style="color: var(--bs-body-color);">night</span>
-                  <i class="tax-info" style="font-weight:400; font-size:0.9rem; color: var(--bs-secondary-color);">&nbsp; &nbsp; +18% GST</i>
+                  <span style="font-size: 0.9rem; color: var(--bs-body-color);">night</span>
+                  <i class="tax-info" style="font-weight:400; font-size:0.85rem; color: var(--bs-secondary-color);">&nbsp; &nbsp; +18% GST</i>
                 </p>
               </div>
             </div>

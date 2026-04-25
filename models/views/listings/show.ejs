@@ -35,26 +35,27 @@
     </div>
 
     <% if(listing.images && listing.images.length >= 5) { %>
-      <div class="photo-grid-container position-relative mb-4" style="border-radius: 12px; overflow: hidden; height: 60vh;">
+      <!-- Desktop Grid -->
+      <div class="photo-grid-container d-none d-md-block position-relative mb-4" style="border-radius: 12px; overflow: hidden; height: 60vh;">
         <div class="row g-2 h-100 w-100 m-0">
           <div class="col-md-6 h-100 p-0 pe-1">
-            <img src="<%= listing.images[0].url.replace('/upload', '/upload/w_1000,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Main Image">
+            <img src="<%= listing.images[0].url.replace('/upload', '/upload/w_1000,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Main Image" data-bs-toggle="modal" data-bs-target="#allPhotosModal">
           </div>
           <div class="col-md-6 h-100 p-0 ps-1 d-flex flex-column gap-2">
             <div class="row g-2 h-50 m-0">
               <div class="col-6 h-100 p-0 pe-1 pb-1">
-                <img src="<%= listing.images[1].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 2">
+                <img src="<%= listing.images[1].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 2" data-bs-toggle="modal" data-bs-target="#allPhotosModal">
               </div>
               <div class="col-6 h-100 p-0 ps-1 pb-1">
-                <img src="<%= listing.images[2].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 3">
+                <img src="<%= listing.images[2].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 3" data-bs-toggle="modal" data-bs-target="#allPhotosModal">
               </div>
             </div>
             <div class="row g-2 h-50 m-0">
               <div class="col-6 h-100 p-0 pe-1 pt-1">
-                <img src="<%= listing.images[3].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 4">
+                <img src="<%= listing.images[3].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 4" data-bs-toggle="modal" data-bs-target="#allPhotosModal">
               </div>
               <div class="col-6 h-100 p-0 ps-1 pt-1 position-relative">
-                <img src="<%= listing.images[4].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 5">
+                <img src="<%= listing.images[4].url.replace('/upload', '/upload/w_400,q_auto,f_auto') %>" class="w-100 h-100 photo-grid-img" style="object-fit:cover;" alt="Image 5" data-bs-toggle="modal" data-bs-target="#allPhotosModal">
                 <button class="btn btn-light position-absolute border border-dark rounded-3 px-3 py-1 bg-white text-black btn-show-all shadow-sm" data-bs-toggle="modal" data-bs-target="#allPhotosModal" style="bottom: 16px; right: 16px; font-weight: 600; font-family: 'plus-jakarta-sans', sans-serif;">
                   <i class="fa-solid fa-braille me-2"></i>Show all photos
                 </button>
@@ -63,17 +64,20 @@
           </div>
         </div>
       </div>
-    <% } else if(listing.images && listing.images.length > 0) { %>
-      <div id="listingCarousel" class="carousel slide mb-4" data-bs-ride="false" data-bs-interval="false" style="border-radius: 12px; overflow: hidden;">
+    <% } %>
+
+    <% if(listing.images && listing.images.length > 0) { %>
+      <!-- Mobile Carousel (or Desktop if < 5 images) -->
+      <div id="listingCarousel" class="carousel slide mb-4 <%= listing.images.length >= 5 ? 'd-md-none' : '' %>" data-bs-ride="false" data-bs-interval="false" style="border-radius: 12px; overflow: hidden;">
         <div class="carousel-indicators">
           <% listing.images.forEach((img, i) => { %>
             <button type="button" data-bs-target="#listingCarousel" data-bs-slide-to="<%= i %>" class="<%= i === 0 ? 'active' : '' %>" aria-current="true" aria-label="Slide <%= i+1 %>"></button>
           <% }) %>
         </div>
-        <div class="carousel-inner" style="background: #fff; height: 60vh;">
+        <div class="carousel-inner" style="background: #fff; height: <%= listing.images.length >= 5 ? '40vh' : '60vh' %>;">
           <% listing.images.forEach((img, i) => { %>
             <div class="carousel-item <%= i === 0 ? 'active' : '' %> h-100" style="background: #fff; text-align: center;">
-              <img src="<%= img.url.replace('/upload', '/upload/w_1000,q_auto,f_auto') %>" class="d-block w-100 h-100" alt="listing image" style="object-fit:cover;">
+              <img src="<%= img.url.replace('/upload', '/upload/w_1000,q_auto,f_auto') %>" class="d-block w-100 h-100" alt="listing image" style="object-fit:cover;" data-bs-toggle="modal" data-bs-target="#allPhotosModal">
             </div>
           <% }) %>
         </div>
@@ -88,7 +92,7 @@
           </button>
         <% } %>
       </div>
-    <% } else { %>
+    <% } else if (!listing.images || listing.images.length === 0) { %>
       <div class="mb-4" style="border-radius: 12px; overflow: hidden; height: 60vh;">
         <img src="<%= typeof listing.image === 'object' ? listing.image.url : listing.image %>" class="w-100 h-100" style="object-fit:cover;" alt="listing_image" />
       </div>

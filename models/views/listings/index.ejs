@@ -34,7 +34,7 @@
       font-size: 1.25rem; /* slightly larger icon */
       margin-bottom: 0.2rem;
     }
-
+    .filter p {
       font-size: 0.75rem; /* thinner text */
       margin-top: 0.2rem;
       font-weight: 500;
@@ -172,6 +172,7 @@
       <% } %>
         <% for(let listing of allListings) { %>
           <a href="/listings/<%= listing._id %>" class="listing-links">
+            <div class="card col listing-card">
              <% if(listing.images && listing.images.length > 0) { %>
                 <div id="carousel-<%= listing._id %>" class="carousel slide" data-bs-ride="false" data-bs-interval="false">
                   <div class="carousel-indicators">

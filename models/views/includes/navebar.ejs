@@ -101,13 +101,52 @@
   }
 </style>
 
-<div class="mobile-search-pill d-lg-none" onclick="document.querySelector('.navbar-toggler').click();">
+<div class="mobile-search-pill d-lg-none" data-bs-toggle="modal" data-bs-target="#mobileSearchModal" style="cursor: pointer;">
   <i class="fa-solid fa-magnifying-glass" style="font-size: 1.2rem; color: #222;"></i>
   <div class="mobile-search-text">
     <p class="mobile-search-title">Where to?</p>
     <p class="mobile-search-subtitle">Anywhere • Any week • Add guests</p>
   </div>
 </div>
+
+<!-- Mobile Search Modal -->
+<div class="modal fade" id="mobileSearchModal" tabindex="-1" aria-labelledby="mobileSearchModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="border-radius: 1.5rem; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+      <div class="modal-header" style="border-bottom: none; padding-bottom: 0;">
+        <h5 class="modal-title fw-bold" id="mobileSearchModalLabel">Search</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <form class="d-flex flex-column w-100" role="search" action="/listings" method="GET">
+          <div class="mb-3">
+            <label for="mobileSearchInput" class="form-label fw-semibold">Where to?</label>
+            <div class="position-relative">
+              <i class="fa-solid fa-magnifying-glass position-absolute" style="left: 15px; top: 50%; transform: translateY(-50%); color: #717171;"></i>
+              <input class="form-control search-inp w-100" id="mobileSearchInput" type="search" placeholder="Search destinations" name="search"
+                value="<%= locals.search || '' %>" style="padding-left: 2.5rem; border-radius: 12px; height: 50px;" autofocus />
+            </div>
+          </div>
+          <button class="btn w-100 fw-bold" type="submit" style="background-color: #fe424d; color: white; border-radius: 12px; height: 50px;">
+            Search
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchModal = document.getElementById('mobileSearchModal');
+    const searchInput = document.getElementById('mobileSearchInput');
+    if (searchModal && searchInput) {
+      searchModal.addEventListener('shown.bs.modal', () => {
+        searchInput.focus();
+      });
+    }
+  });
+</script>
 
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
   <div class="container-fluid">
@@ -130,7 +169,7 @@
         </form>
       </div>
       <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="/listings/new">Airbnb your home</a>
+        <a class="nav-link" href="/listings/new">Host Your Stay</a>
         <a class="nav-link" href="/ai/plan"><b>Plan Trip (AI) ✨</b></a>
         <button id="theme-toggle" class="btn btn-link nav-link" style="text-decoration: none;" title="Toggle Dark/Light Mode">
           <i class="fa-regular fa-moon" id="theme-icon"></i>

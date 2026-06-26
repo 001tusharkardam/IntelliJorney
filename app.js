@@ -1,5 +1,12 @@
 if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
+  /*
+   Agar humara project online deployment (production) 
+   par nahi chal raha hai (yani hum local 
+   computer par development kar rahe hain),
+    tab hum .env file se private data read
+     karne ke liye dotenv library ko configure karte hain.
+   */
 }
 const express = require("express");
 const app = express();

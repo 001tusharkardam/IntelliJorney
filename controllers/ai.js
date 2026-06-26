@@ -3,7 +3,15 @@ const MarkdownIt = require("markdown-it");
 const md = new MarkdownIt();
 
 module.exports.renderPlanForm = (req, res) => {
-    res.render("ai/plan.ejs", { plan: null, destination: null, source: null });
+    res.render("ai/plan.ejs", { 
+        plan: null, 
+        destination: null, 
+        source: null, 
+        transport: "Any (Best Option)", 
+        days: 3, 
+        budget: "₹5,000 - ₹10,000 (Standard)", 
+        interests: "" 
+    });
 };
 
 module.exports.generatePlan = async (req, res) => {
@@ -55,7 +63,15 @@ module.exports.generatePlan = async (req, res) => {
         const text = response.text();
         const htmlContent = md.render(text);
 
-        res.render("ai/plan.ejs", { plan: htmlContent, destination, source });
+        res.render("ai/plan.ejs", { 
+            plan: htmlContent, 
+            destination, 
+            source, 
+            transport, 
+            days, 
+            budget, 
+            interests 
+        });
 
     } catch (e) {
         console.error("AI GENERATION ERROR:", e);

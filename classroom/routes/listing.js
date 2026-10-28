@@ -15,7 +15,7 @@ router
 .route("/")
 .get(wrapAsync(ListingController.index))
 .post(isLoggedIn,
-   upload.single("image"),
+   upload.array("images", 5),
   //  validateListing,
    wrapAsync(ListingController.createListing));
 
@@ -24,7 +24,7 @@ router.get("/new", isLoggedIn,ListingController.renderNewForm);
 
    router.route("/:id")
    .get(wrapAsync(ListingController.showListing))
-   .put(isLoggedIn, upload.single("image"),  wrapAsync(ListingController.update))
+   .put(isLoggedIn, upload.array("images", 5),  wrapAsync(ListingController.update))
    .delete(isLoggedIn, wrapAsync(ListingController.destroy));
 
 

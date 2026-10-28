@@ -1,0 +1,31 @@
+<!-- Mobile Bottom Navigation Bar (App-like native feel on phones) -->
+<nav class="mobile-bottom-nav d-md-none">
+  <a href="/listings" class="mobile-nav-item" id="nav-explore">
+    <i class="fa-solid fa-compass"></i>
+    <span>Explore</span>
+  </a>
+  <a href="/ai/plan" class="mobile-nav-item" id="nav-plan">
+    <i class="fa-solid fa-wand-magic-sparkles"></i>
+    <span>Plan AI</span>
+  </a>
+  <a href="/listings/new" class="mobile-nav-item" id="nav-host">
+    <i class="fa-solid fa-circle-plus"></i>
+    <span>Host</span>
+  </a>
+  <% if(typeof currUser !== 'undefined' && currUser) { %>
+    <a href="/profile" class="mobile-nav-item" id="nav-profile">
+      <% if(currUser.profileImage && currUser.profileImage.url) { %>
+        <img src="<%= currUser.profileImage.url %>" alt="Avatar" style="width: 22px; height: 22px; border-radius: 50%; object-fit: cover;" />
+      <% } else { %>
+        <i class="fa-regular fa-user"></i>
+      <% } %>
+      <span>Profile</span>
+    </a>
+  <% } else { %>
+    <a href="/login" class="mobile-nav-item" id="nav-login">
+      <i class="fa-regular fa-user"></i>
+      <span>Log in</span>
+    </a>
+  <% } %>
+</nav>
+

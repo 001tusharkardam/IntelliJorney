@@ -55,7 +55,15 @@ module.exports.generatePlan = async (req, res) => {
         const text = response.text();
         const htmlContent = md.render(text);
 
-        res.render("ai/plan.ejs", { plan: htmlContent, destination, source });
+        res.render("ai/plan.ejs", { 
+            plan: htmlContent, 
+            destination, 
+            source,
+            transport,
+            days,
+            budget,
+            interests
+        });
 
     } catch (e) {
         console.error("AI GENERATION ERROR:", e);

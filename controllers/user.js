@@ -12,7 +12,7 @@ module.exports.signup = async (req, res) => {
             if(err){
                 return next(err);
             }
-              req.flash("success", "Welcome to Wanderlust!");
+              req.flash("success", "Welcome to Intellijorney!");
               res.redirect("/listings");
         });
       
@@ -28,7 +28,7 @@ module.exports.renderLoginForm = (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-    req.flash("success","Welcome back to Wanderlust!");
+    req.flash("success","Welcome back to Intellijorney!");
     let redirectUrl = res.locals.redirectUrl || "/listings";
     res.redirect(redirectUrl);
 };
@@ -42,3 +42,32 @@ module.exports.logout = (req,res,next) =>{
         res.redirect("/listings");
     }) ;
 }
+
+module.exports.renderProfileForm = async (req, res) => {
+    res.render("users/profile.ejs");
+};
+
+module.exports.updateProfile = async (req, res) => {
+    const { firstName, lastName, mobile, email } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) {
+        req.flash("error", "User not found.");
+        return res.redirect("/listings");
+    }
+
+    user.firstName = firstName;
+    user.lastName = lastName;
+    user.mobile = mobile;
+    user.email = email;
+
+    if (req.file) {
+        user.profileImage = {
+            url: req.file.path,
+            filename: req.file.filename
+        };
+    }
+
+    await user.save();
+    req.flash("success", "Profile updated successfully!");
+    res.redirect("/profile");
+};
